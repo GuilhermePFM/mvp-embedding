@@ -4,6 +4,8 @@
 
 A specialized microservice that generates semantic embeddings for financial transaction descriptions using Google's Gemini embedding model. Part of a personal finance management system.
 
+![alt text](embedding.png)
+
 ---
 
 ## Overview
