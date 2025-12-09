@@ -13,4 +13,6 @@ def home():
 
 
 if __name__ == '__main__':
-    app.run()
+    port = 5001
+    print(f"Starting Flask app on port {port}")
+    app.run(host='0.0.0.0', port=port, debug=True)
