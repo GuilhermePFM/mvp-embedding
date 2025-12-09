@@ -6,6 +6,9 @@ A specialized microservice that generates semantic embeddings for financial tran
 
 ![alt text](embedding.png)
 
+Other repositories:
+* https://github.com/GuilhermePFM/mvp-front-end
+* https://github.com/GuilhermePFM/mvp-api
 ---
 
 ## Overview
