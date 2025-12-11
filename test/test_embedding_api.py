@@ -69,7 +69,7 @@ def test_embedding_api_handles_external_failure(client, monkeypatch):
 def test_integration(client):
     """Test the integration of the embedding API with the Gemini API"""
 
-    payload = {"descriptions": [{"description": "Compra de alimentos"}]}
+    payload = {"descriptions": [{"description": "Compra de alimentos"}, {"description": "Pagamento de conta de luz"}]}
 
     response = client.post("/embedding", json=payload, content_type="application/json")
 

@@ -7,6 +7,8 @@ from pathlib import Path
 import os
 import requests
 from machine_learning.embedding import normalize_embedding
+from tqdm.auto import tqdm
+tqdm.pandas()
 
 # Load environment variables from the project root .env file, if present.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
@@ -29,22 +31,44 @@ def embedding(body: EmbeddingListSchema):
     """
     try:
         embeddings = []
-        for item in body.descriptions:
+        batch_size = 25  # at most 100 requests can be in one batch
+        array_of_texts = [item.description for item in body.descriptions]
+
+        # Loop over the texts in chunks of batch_size
+        for i in tqdm(range(0, len(array_of_texts), batch_size)):
+            batch = array_of_texts[i : i + batch_size]
             response = requests.post(
-                GEMINI_EMBEDDING_URL,
-                headers={"x-goog-api-key": GEMINI_API_KEY},
-                json={
-                    "model": GEMINI_MODEL,
-                    "task_type": "CLASSIFICATION",
-                    "content": {"parts": [{"text": item.description}]},
-                    "output_dimensionality": DIMENSIONALITY,
-                },
+            GEMINI_EMBEDDING_URL,
+            headers={"x-goog-api-key": GEMINI_API_KEY},
+            json={
+                "model": GEMINI_MODEL,
+                "task_type": "CLASSIFICATION",
+                "content": {"parts": [{"text": item.description} for item in body.descriptions]},
+                "output_dimensionality": DIMENSIONALITY,
+            },
             )
-            logger.debug(f"Embedding created for transaction: '{item.description}'")
             embedding_values = response.json()['embedding']['values']
-            normalized_embedding = normalize_embedding(embedding_values)
+            normalized_embeddings = [normalize_embedding(row) for row in embedding_values]
+
             # Convert numpy types to native Python types for Pydantic validation
-            embeddings.append([float(x) for x in normalized_embedding])
+            embeddings.extend([float(x) for x in normalized_embeddings])
+
+        # for item in body.descriptions:
+        #     response = requests.post(
+        #         GEMINI_EMBEDDING_URL,
+        #         headers={"x-goog-api-key": GEMINI_API_KEY},
+        #         json={
+        #             "model": GEMINI_MODEL,
+        #             "task_type": "CLASSIFICATION",
+        #             "content": {"parts": [{"text": item.description}]},
+        #             "output_dimensionality": DIMENSIONALITY,
+        #         },
+        #     )
+        #     logger.debug(f"Embedding created for transaction: '{item.description}'")
+        #     embedding_values = response.json()['embedding']['values']
+        #     normalized_embedding = normalize_embedding(embedding_values)
+        #     # Convert numpy types to native Python types for Pydantic validation
+        #     embeddings.append([float(x) for x in normalized_embedding])
 
         return {"embeddings": embeddings}, 200
 
