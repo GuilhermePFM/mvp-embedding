@@ -1,11 +1,12 @@
 # Core dependencies
 Flask==3.1.0
-flask-openapi3==4.1.0
+flask-openapi3[swagger]==4.1.0
 flask-cors==5.0.1
 python-dotenv==1.2.1
 requests==2.32.4
 pydantic==2.10.6
 numpy==2.2.6
+
 
 # Production server
 gunicorn==23.0.0
