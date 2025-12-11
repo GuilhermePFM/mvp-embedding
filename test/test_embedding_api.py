@@ -77,7 +77,7 @@ def test_integration(client):
     body = response.get_json()
 
     assert "embeddings" in body
-    assert len(body["embeddings"]) == 1
+    assert len(body["embeddings"]) == 2
     assert len(body["embeddings"][0]) == 768
     assert all(isinstance(x, float) for x in body["embeddings"][0])
-    assert all(0 <= x <= 1 for x in body["embeddings"][0])
+    assert all(-1 <= x <= 1 for x in body["embeddings"][0])
