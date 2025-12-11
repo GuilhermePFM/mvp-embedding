@@ -13,7 +13,6 @@ import requests
 from machine_learning.embedding import normalize_embedding
 from tqdm.auto import tqdm
 
-tqdm.pandas()
 
 # Load environment variables from the project root .env file, if present.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
